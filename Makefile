@@ -32,14 +32,8 @@ flashmem_bin := flashmem.bin
 clean_files = $(bin) $(elf) $(obj) $(dep) $(flashmem_bin)
 
 define help_message
-               _             _ _                      __
-              (_)           (_) |                    / _|
-  _____      ___  __ _  __ _ _| | _____ _   _ ______| |___      __
- / __\ \ /\ / / |/ _` |/ _` | | |/ / _ \ | | |______|  _\ \ /\ / /
- \__ \\ V  V /| | (_| | (_| | |   <  __/ |_| |      | |  \ V  V /
- |___/ \_/\_/ |_|\__, |\__, |_|_|\_\___|\__, |      |_|   \_/\_/
-                  __/ | __/ |            __/ |
-                 |___/ |___/            |___/
+
+Makefile for swiggikey-fw
 
 MAKE TARGETS
 

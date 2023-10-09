@@ -5,24 +5,72 @@
 
 #define REG32(addr) (*(uint32_t volatile *)(void *)(addr))
 
-struct reg_gpio {
-    uint32_t mode;
-    uint32_t otype;
-    uint32_t ospeed;
-    uint32_t pupd;
-    uint32_t id;
-    uint32_t od;
-    uint32_t bsr;
-    uint32_t lck;
-    uint32_t afrl;
-    uint32_t afrh;
-    uint32_t br;
-};
+//
+// GPIOx
+//
+
+// Common GPIOx offsets
+#define REG_GPIO_MODER_OFFSET   0x00
+#define REG_GPIO_OTYPER_OFFSET  0x04
+#define REG_GPIO_OSPEEDR_OFFSET 0x08
+#define REG_GPIO_PUPDR_OFFSET   0x0c
+#define REG_GPIO_IDR_OFFSET     0x10
+#define REG_GPIO_ODR_OFFSET     0x14
+#define REG_GPIO_BSRR_OFFSET    0x18
+#define REG_GPIO_LCKR_OFFSET    0x1c
+#define REG_GPIO_AFRLR_OFFSET   0x20
+#define REG_GPIO_AFRHR_OFFSET   0x24
+#define REG_GPIO_BRR_OFFSET     0x28
+
+// GPIOC
 #define REG_GPIOC_START 0x48000800
+#define REG_GPIOC_MODER   REG32(REG_GPIOC_START + REG_GPIO_MODER_OFFSET)
+#define REG_GPIOC_OTYPER  REG32(REG_GPIOC_START + REG_GPIO_OTYPER_OFFSET
+#define REG_GPIOC_OSPEEDR REG32(REG_GPIOC_START + REG_GPIO_OSPEEDR_OFFSET)
+#define REG_GPIOC_PUPDR   REG32(REG_GPIOC_START + REG_GPIO_PUPDR_OFFSET)
+#define REG_GPIOC_IDR     REG32(REG_GPIOC_START + REG_GPIO_IDR_OFFSET)
+#define REG_GPIOC_ODR     REG32(REG_GPIOC_START + REG_GPIO_ODR_OFFSET)
+#define REG_GPIOC_BSRR    REG32(REG_GPIOC_START + REG_GPIO_BSRR_OFFSET)
+#define REG_GPIOC_LCKR    REG32(REG_GPIOC_START + REG_GPIO_LCKR_OFFSET)
+#define REG_GPIOC_AFRLR   REG32(REG_GPIOC_START + REG_GPIO_AFRLR_OFFSET)
+#define REG_GPIOC_AFRHR   REG32(REG_GPIOC_START + REG_GPIO_AFRHR_OFFSET)
+#define REG_GPIOC_BRR     REG32(REG_GPIOC_START + REG_GPIO_BRR_OFFSET)
 
+//
+// Reset and Clock Control (RCC)
+//
 
-#define REG_RCC 0x40021000
+// RCC offsets
+#define REG_RCC_CR_OFFSET       0x00 // Clock control register
+#define REG_RCC_CFGR_OFFSET     0x04 // Clock configuration register
+#define REG_RCC_CIR_OFFSET      0x08 // Clock interrupt register
+#define REG_RCC_APB2RSTR_OFFSET 0x0c // APB peripheral reset register 2
+#define REG_RCC_APB1RSTR_OFFSET 0x10 // APB peripheral reset register 1
+#define REG_RCC_AHBENR_OFFSET   0x14 // AHB peripheral clock enable register
+#define REG_RCC_APB2ENR_OFFSET  0x18 // APB peripheral clock enable register 2
+#define REG_RCC_APB1ENR_OFFSET  0x1c // APB peripheral clock enable register 1
+#define REG_RCC_BDCR_OFFSET     0x20 // RTC domain control register
+#define REG_RCC_CSR_OFFSET      0x24 // Control/status register
+#define REG_RCC_AHBRSTR_OFFSET  0x28 // AHB peripheral reset register
+#define REG_RCC_CFGR2_OFFSET    0x2c // Clock configuration register 2
+#define REG_RCC_CFGR3_OFFSET    0x30 // Clock configuration register 3
+#define REG_RCC_CR2_OFFSET      0x34 // Clock control register 2
 
-
+// RCC
+#define REG_RCC_START 0x40021000
+#define REG_RCC_CR       REG32(REG_RCC_START + REG_RCC_CR_OFFSET)
+#define REG_RCC_CFGR     REG32(REG_RCC_START + REG_RCC_CFGR_OFFSET)
+#define REG_RCC_CIR      REG32(REG_RCC_START + REG_RCC_CIR_OFFSET)
+#define REG_RCC_APB2RSTR REG32(REG_RCC_START + REG_RCC_APB2RSTR_OFFSET)
+#define REG_RCC_APB1RSTR REG32(REG_RCC_START + REG_RCC_APB1RSTR_OFFSET)
+#define REG_RCC_AHBENR   REG32(REG_RCC_START + REG_RCC_AHBENR_OFFSET)
+#define REG_RCC_APB2ENR  REG32(REG_RCC_START + REG_RCC_APB2ENR_OFFSET)
+#define REG_RCC_APB1ENR  REG32(REG_RCC_START + REG_RCC_APB1ENR_OFFSET)
+#define REG_RCC_BDCR     REG32(REG_RCC_START + REG_RCC_BDCR_OFFSET)
+#define REG_RCC_CSR      REG32(REG_RCC_START + REG_RCC_CSR_OFFSET)
+#define REG_RCC_AHBRSTR  REG32(REG_RCC_START + REG_RCC_AHBRSTR_OFFSET)
+#define REG_RCC_CFGR2    REG32(REG_RCC_START + REG_RCC_CFGR2_OFFSET)
+#define REG_RCC_CFGR3    REG32(REG_RCC_START + REG_RCC_CFGR3_OFFSET)
+#define REG_RCC_CR2      REG32(REG_RCC_START + REG_RCC_CR2_OFFSET)
 
 #endif

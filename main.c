@@ -24,17 +24,17 @@
 
 int main(void)
 {
-    REG32(REG_RCC + 0x14) |= 1 << 19;
-    struct reg_gpio volatile *const gpioc = (struct reg_gpio *)(void *)REG_GPIOC_START;
-    gpioc->mode |= 1 << ((7 * 2) + 0);
+    REG_RCC_AHBENR |= 1 << 19;
+
+    REG_GPIOC_MODER |= 1 << ((7 * 2) + 0);
 
     while (1) {
-        gpioc->bsr |= 1 << (7 + 16);
+        REG_GPIOC_BSRR |= 1 << (7 + 16);
         for (int volatile i = 0; i < 100000; i++)
         {
             // Wait
         }
-        gpioc->bsr |= 1 << (7);
+        REG_GPIOC_BSRR |= 1 << (7);
         for (int volatile i = 0; i < 100000; i++)
         {
             // Wait
