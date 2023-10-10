@@ -23,7 +23,7 @@
 #define VECTAB_DMA_CH1(fn)                    VECTAB_SET(vectab_dma_ch1, fn)
 #define VECTAB_DMA_CH2_3_DMA2_CH1_2(fn)       VECTAB_SET(vectab_dma_ch2_3_dma2_ch1_2, fn)
 #define VECTAB_DMA_CH4_5_6_7_DMA2_CH3_4_5(fn) VECTAB_SET(vectab_dma_ch4_5_6_7_dma2_ch3_4_5, fn)
-#define VECTAB_ADC_COMP(fn)                   VECTAB_SET(vectab_   adc_comp, fn)
+#define VECTAB_ADC_COMP(fn)                   VECTAB_SET(vectab_adc_comp, fn)
 #define VECTAB_TIM1_BRK_UP_TRG_COM(fn)        VECTAB_SET(vectab_tim1_brk_up_trg_com, fn)
 #define VECTAB_TIM1_CC(fn)                    VECTAB_SET(vectab_tim1_cc, fn)
 #define VECTAB_TIM2(fn)                       VECTAB_SET(vectab_tim2, fn)
