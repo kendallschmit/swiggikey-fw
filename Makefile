@@ -11,7 +11,7 @@ CFLAGS = -march=armv6-m -mtune=cortex-m0 -mfloat-abi=soft -mthumb
 CFLAGS += -Os -Wl,--gc-sections
 CFLAGS += -std=c11 -Wall -MMD -MP
 
-LDFLAGS = --specs=nosys.specs -T $(linker_script) -nostdlib
+LDFLAGS = --specs=nosys.specs -T $(linker_script)
 LDLIBS =
 
 dfu_util_flashmem = --alt '@Internal Flash  /0x08000000/064*0002Kg' --dfuse-address 0x08000000:0x00020000

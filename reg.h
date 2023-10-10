@@ -3,9 +3,8 @@
 
 #include <stdint.h>
 
-#define BIT(shift) (1 << (shift))
+#define BIT(shift) ((uint32_t)(1 << (shift)))
 #define REG32(addr) (*(uint32_t volatile *)(void *)(addr))
-
 
 ////////////////////
 // Reset and Clock Control (RCC)
@@ -43,6 +42,22 @@
 #define REG_RCC_CFGR2    REG32(REG_RCC_START + REG_RCC_CFGR2_OFFSET)
 #define REG_RCC_CFGR3    REG32(REG_RCC_START + REG_RCC_CFGR3_OFFSET)
 #define REG_RCC_CR2      REG32(REG_RCC_START + REG_RCC_CR2_OFFSET)
+
+////////////////////
+// SysTick timer (STK)
+//
+
+#define REG_STK_CSR_OFFSET   0x00 // SysTick control and status register
+#define REG_STK_RVR_OFFSET   0x04 // SysTick reload value register
+#define REG_STK_CVR_OFFSET   0x08 // SysTick current value register
+#define REG_STK_CALIB_OFFSET 0x0c // SysTick calibration value register
+
+#define REG_STK_START 0xe000e010
+#define REG_STK_CSR   REG32(REG_STK_START + REG_STK_CSR_OFFSET)
+#define REG_STK_RVR   REG32(REG_STK_START + REG_STK_RVR_OFFSET)
+#define REG_STK_CVR   REG32(REG_STK_START + REG_STK_CVR_OFFSET)
+#define REG_STK_CALIB REG32(REG_STK_START + REG_STK_CALIB_OFFSET)
+
 
 ////////////////////
 // GPIOx
