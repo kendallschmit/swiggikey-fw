@@ -1,15 +1,12 @@
-MEMORY
-{
-    flash   (RX) : ORIGIN = 0x08000000, LENGTH = 128K
-    sram    (RW) : ORIGIN = 0x20000000, LENGTH = 16K
+MEMORY {
+    flash (RX) : ORIGIN = 0x08000000, LENGTH = 128K
+    sram  (RW) : ORIGIN = 0x20000000, LENGTH = 16K
 }
 
-ENTRY(main);
-
 SECTIONS {
-    .text : ALIGN(4) {
-        /* Vector table */
-        . = 0x0000; KEEP(*(.vectab_initial_stack_pointer));
+    /* Vector table */
+    .vector_table : ALIGN(4) {
+        . = 0x0000; LONG(ORIGIN(sram) + LENGTH(sram)); /* Init stack pointer */
         . = 0x0004; KEEP(*(.vectab_reset));
         . = 0x0008; KEEP(*(.vectab_nmi));
         . = 0x000c; KEEP(*(.vectab_hardfault));
@@ -48,20 +45,32 @@ SECTIONS {
         . = 0x00b4; KEEP(*(.vectab_usart3_4_5_6_7_8));
         . = 0x00b8; KEEP(*(.vectab_cec_can));
         . = 0x00bc; KEEP(*(.vectab_usb));
+    } >flash AT>flash
 
-        /* Other stuff */
-        . = 0x0200;
+    /* Code */
+    .text : ALIGN(4) {
         *(.text)
         *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
-    } > flash
+    } >flash AT>flash
+
+    /* Initialized data */
     .data : {
         *(.data)
         *(.data.*)
+    } >sram AT>flash
+
+    /* Uninitialized data */
+    .bss : {
         *(.bss)
         *(.bss.*)
-    } > sram
+    } >sram AT>sram
+
+    /* Section boundries so we can initialize .data and .bss */
+    PROVIDE(ld_section_data_lma = LOADADDR(.data));
+    PROVIDE(ld_section_data_vma = ADDR(.data));
+    PROVIDE(ld_section_data_vma_end = ADDR(.data) + SIZEOF(.data));
+    PROVIDE(ld_section_bss_vma = ADDR(.bss));
+    PROVIDE(ld_section_bss_vma_end = ADDR(.bss) + SIZEOF(.bss));
 }
 
 

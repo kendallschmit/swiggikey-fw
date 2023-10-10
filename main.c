@@ -1,66 +1,90 @@
 #include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "reg.h"
 #include "vectab.h"
 
-VECTAB_SET(vectab_initial_stack_pointer, 0x20004000);
+static void handle_systick(void);
+static void handle_hardfault(void);
+
+static void busy_wait(int count);
+
+uint32_t systick = 0;
+int blink_state = 1;
 
 int main(void)
 {
-    REG_RCC_AHBENR |= BIT(19); // Enable GPIOC peripheral clock
-    REG_GPIOC_MODER |= BIT((6 * 2) + 0); // Output mode for red LED
-    REG_GPIOC_MODER |= BIT((8 * 2) + 0); // Output mode for orange LED
-    REG_GPIOC_MODER |= BIT((9 * 2) + 0); // Output mode for green LED
-    REG_GPIOC_MODER |= BIT((7 * 2) + 0); // Output mode for blue LED
+    // Use 48MHz clock (HSI48) //
 
-    REG_GPIOC_BSRR |= BIT(8); // Orange LED
+    REG_FLASH_ACR |= BIT32(1); // Set flash latency to 001
+    REG_RCC_CR2 |= REG_RCC_CR2_HSI48ON; // Enable HSI48
+    while (!(REG_RCC_CR2 & REG_RCC_CR2_HSI48RDY)) {
+        // Wait for 48MHz clock to be ready
+    }
+    REG_RCC_CFGR |= BIT32(1) | BIT32(0); // Use HSI48 as system clock
 
-    REG_RCC_CR2 |= BIT(0); // Set HSI48ON
-    // Wait for HSI48RDY to be high...
+
+    // Init GPIO //
+
+    REG_RCC_AHBENR |= BIT32(19); // Enable GPIOC peripheral clock
+    REG_GPIOC_MODER |= BIT32((6 * 2) + 0); // Output mode for red LED
+    REG_GPIOC_MODER |= BIT32((8 * 2) + 0); // Output mode for orange LED
+    REG_GPIOC_MODER |= BIT32((9 * 2) + 0); // Output mode for green LED
+    REG_GPIOC_MODER |= BIT32((7 * 2) + 0); // Output mode for blue LED
+
+
+    // Set up SysTick //
+
+    REG_STK_RVR = 48000 - 1; // Count every 48000 cycles (1ms)
+    REG_STK_CVR = 0; // Clear current counter value
+    REG_STK_CSR |= BIT32(2); // Clock source is processor clock
+    REG_STK_CSR |= BIT32(1); // Enable SysTick exception request
+    REG_STK_CSR |= BIT32(0); // Enable counter
+
+
+    // Blink green LED (roughly) twice per second using busy waits //
+
     while (1) {
-        if (REG_RCC_CR2 & BIT(1)) {
-            break;
+        REG_GPIOC_BSRR |= BIT32(9);
+        busy_wait(500000);
+        REG_GPIOC_BSRR |= BIT32(9 + 16);
+        busy_wait(500000);
+    }
+}
+
+static void handle_systick(void)
+{
+    // Orange LED is on for 1000ms. After that, the blue LED blinks twice per
+    // second.
+    if (systick < 1000) {
+        REG_GPIOC_BSRR |= BIT32(8);
+    }
+    else {
+        REG_GPIOC_BSRR |= BIT32(8 + 16);
+        if (systick % 250 == 0) {
+            if (!blink_state)
+                REG_GPIOC_BSRR |= BIT32(7);
+            else
+                REG_GPIOC_BSRR |= BIT32(7 + 16);
+            blink_state = !blink_state;
         }
     }
-    REG_RCC_CFGR |= BIT(1) | BIT(0); // Use HSI48 as system clock
+    systick++;
+}
+VECTAB_SYSTICK(handle_systick);
 
-    REG_GPIOC_BSRR |= BIT(8 + 16); // Orange LED
+static void handle_hardfault(void)
+{
+    REG_RCC_AHBENR |= BIT32(19); // Enable GPIOC peripheral clock
+    REG_GPIOC_MODER |= BIT32((6 * 2) + 0); // Output mode for red LED
+    REG_GPIOC_BSRR |= BIT32(6); // Red LED
+}
+VECTAB_HARDFAULT(handle_hardfault);
 
-    REG_STK_RVR = 100000; // SysTick counts down from here
-    REG_STK_CVR = 100000; // Initial value for counter
-    REG_STK_CSR |= BIT(1); // Enable SysTick exception request
-    REG_STK_CSR |= BIT(0); // Enable counter
-
-    // Green LED
-    while (1) {
-        REG_GPIOC_BSRR |= BIT(9);
-        for (int volatile i = 0; i < 100000; i++) {
-            // Wait
-        }
-        REG_GPIOC_BSRR |= BIT(9 + 16);
-        for (int volatile i = 0; i < 100000; i++) {
-            // Wait
-        }
+static void busy_wait(int count)
+{
+    for (int volatile i = 0; i < count; i++) {
+        // Wait
     }
-    while (1);
 }
-VECTAB_SET(vectab_reset, main);
-
-// Blue LED
-void handle_systick(void)
-{
-    static int a = 0;
-    if (!a)
-        REG_GPIOC_BSRR |= BIT(7);
-    else
-        REG_GPIOC_BSRR |= BIT(7 + 16);
-    a = !a;
-
-}
-VECTAB_SET(vectab_systick, handle_systick);
-
-void handle_hardfault(void)
-{
-    REG_GPIOC_BSRR |= BIT(6);
-}
-VECTAB_SET(vectab_hardfault, handle_hardfault);
